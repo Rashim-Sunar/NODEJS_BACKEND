@@ -1,0 +1,4 @@
+
+3input.txt
+This is sample text which we are going to read using node js fs module.
+Fri May 31 2024 09:50:32 GMT-0400 (Eastern Daylight Time)

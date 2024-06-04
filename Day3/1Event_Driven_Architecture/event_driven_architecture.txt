@@ -1,0 +1,13 @@
+Event Driven Architecture consists of three main parts.
+
+<1> Event Emitter
+    --> Emits an named event when sth imp happens in the app. 
+        For example: a request hitting the server, a file finishing to read, etc.
+        Whoever resposible for these tasks are event emitters.
+
+<2> Event Listener
+    -->Wait for an event to happen and fires a callback function attach to that event listener if the event happened.
+        It reacts to the emitted events by calling event handler.
+
+<3> Event Handler
+    -->The callback function is event handler.
