@@ -1,0 +1,26 @@
+What is npm? 
+--> NPM – or "Node Package Manager" – is the default package manager for 
+JavaScript's runtime Node.js.
+
+NPM consists of two main parts:
+
+--> a CLI (command-line interface) tool for publishing and downloading packages, and
+--> an online repository that hosts JavaScript packages
+
+TYPES OF DEPENDENCIES.....
+<1> REGULAR DEPENDENCIES: A package is called as a simple or regular dependency if the working
+    of our application or the code which we are writing, depends on that package.
+    Example: npm install express
+
+<2> A package is called as development dependency if that package is only required for 
+    the development purpose and on which, the working of our application doesn't depend.
+    Example: npm install --save-dev
+
+
+TYPES OF PACKAGE INSTALL...
+<1> LOCAL INSTALL: The package is only availbale in that project folder, where the package 
+    is installed. It cannot be used outside of that folder.
+
+<2> GLOBAL INSTALL: The package is installed globally in the machine and can be accessed from
+    folder or any project directory.
+    Example: npm i -g nodemon --save-dev
