@@ -143,7 +143,7 @@ const deleteMovie = (req, res)=>{
 // app.delete("/api/v1/movies/:id", deleteMovie);
 
 //Since, some of the API's are having same endpoints, so refactoring the code using route chaining in express..
-app.route("/api/v1/movies")
+/*app.route("/api/v1/movies")
     .get(getAllMovie)
     .post(createMovie)
 
@@ -151,6 +151,19 @@ app.route("/api/v1/movies/:id")
     .get(getMovie)
     .patch(updateMovie)
     .delete(deleteMovie)
+*/
+const movieRouter = express.Router(); //Creating a new router
+movieRouter.route("/")
+    .get(getAllMovie)
+    .post(createMovie)
+
+movieRouter.route("/:id")
+    .get(getMovie)
+    .patch(updateMovie)
+    .delete(deleteMovie)
+
+app.use("/api/v1/movies",movieRouter); // Mounting router 'movieRouter' to the given path.
+//When we mount a router to a path, then it becomes a middleware adn is applied to all the requests which contain that path as endpoint.
 
 app.listen(port,()=>{
     console.log("Server has started on port",port)
