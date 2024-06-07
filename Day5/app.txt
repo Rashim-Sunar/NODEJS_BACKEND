@@ -1,0 +1,26 @@
+HTTP METHODS:
+--------------
+HTTP stands for Hypertext Transfer Protocol, which is the standard protocol for communication 
+between web clients and servers. HTTP methods are the actions that clients can request from servers,
+such as GET, POST, PUT, PATCH, DELETE, and others. Each method has a specific meaning and purpose,
+and servers should respond accordingly. For example, GET is used to retrieve data from a server,
+POST is used to create new data on a server, PUT is used to replace existing data on a server, and so on.
+
+***************************************************************************************************
+
+RESTful API's
+----------------
+REST stands for Representational State Transfer, which is a set of principles and best practices for
+designing web APIs. RESTful APIs are web APIs that follow the REST principles, such as using HTTP methods
+to perform operations on resources, using uniform and meaningful URLs to identify resources, and using standard
+formats to exchange data, such as JSON or XML. RESTful APIs aim to be simple, stateless, scalable, and consistent.
+
+***********************************************************************************************************************
+
+PUT VS PATCH
+--------------
+One of the common challenges that web developers face when working with RESTful APIs is how to update resources on a server.
+There are two main HTTP methods that can be used for this purpose: PATCH and PUT. PATCH is used to apply partial updates to a
+resource, meaning that only the fields that need to be changed are sent in the request body. PUT is used to replace the entire
+resource with a new representation, meaning that all the fields of the resource are sent in the request body, even if they are
+not modified.
