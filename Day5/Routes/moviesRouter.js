@@ -14,7 +14,8 @@ router.param('id', moviesController.checkId);
 
 router.route("/")
     .get(moviesController.getAllMovie)
-    .post(moviesController.createMovie)
+    .post(moviesController.validateMovie ,moviesController.createMovie) 
+    //middleware chaining...first validation middleware is run and then createMovie middleware function is run.
 
 router.route("/:id")
     .get(moviesController.getMovie)

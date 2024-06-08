@@ -17,6 +17,17 @@ exports.checkId = (req, res, next, value) => {
     next();
 }
 
+//Middleware to handle create movie validation....
+exports.validateMovie = (req, res, next) => {
+    if(!req.body.name || !req.body.releaseYear){
+        return res.status(400).json({
+            status: "fail",
+            message: "Invalid movie data"
+        });
+    }
+    next();
+}
+
 //ROUTE HANDLER
 exports.getAllMovie = (req,res)=>{ 
     //Using JSON JSON formatting to send the json data
