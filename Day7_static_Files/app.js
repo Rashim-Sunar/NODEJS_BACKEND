@@ -1,6 +1,11 @@
+const dotenv = require('dotenv');
+dotenv.config({path: './config.env'});
+
 const express = require("express");
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
+
+console.log(process.env);
 
 app.use(express.static("./public")); //Serving static file inside public folder..
 //URL -> 127.0.0.1:3000/template/index.html
