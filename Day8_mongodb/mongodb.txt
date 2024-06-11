@@ -1,0 +1,92 @@
+/*
+show dbs --> show database
+dbs --> current database
+show collections --> collections in current database
+
+//Deleting database
+--> db.dropDatabase() //You need to be within the database
+
+//Creating a collection....
+--> db.createCollection(collection_name)
+
+//Deleting a collection
+--> db.<collection_name>.drop()
+
+//Inserting data(documents in a collection)......
+--> db.collection_name.insertOne({name:"rashim", class: 13})
+--> db.collection_name.insertMany([{name"Aakash", age: 20},{name: "bivek", age:19}])
+--> db.collection_name.insert() //Used for both one and many(deprocated).
+*/
+
+------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+/*
+FETCH DOCUMETNS FROM A COLLECTION..
+-----------------------------------
+--> db.collection_name.findOne() //returns first deocument only from collection
+--> db.collection_name.findOne({name: "Aakash"}) //returns first document matching the filter.
+--> db.collection_name.find() //  returns all documents from a collection
+--> db.collection_name.find({age: 20}) //returns all the documents with age 20
+
+//Excluding the field which you don't want to fetch from a document in collection
+--> db.collection_name.find({name:"aakash"},{_id: false, gender: 0}) //2nd parameter fields are not returned
+
+To return the document in formatted way use .pretty() method on find()
+--> db.collection_name.find({name: "aakash"}, {_id: false, gender: 0}).pretty()
+
+*/
+
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+
+/*
+UPDATING THE DOCUMETNS IN A COLLECTION
+
+//Updating a single document
+--> db.collection_name.updateOne({name: "Aakash"},{$set: {age: 30, gender: "female}})
+ 
+//Updating multiple documents.
+ --> db.collection_name.updateMany({name: "Aakash"},{$set: {age: 30, gender: "female}})
+
+*/
+
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+ /*
+DELETING A DEOCUMENT IN A COLLECTION......
+
+//deleting a single document
+--> db.collection_name.deleteOne({name: "aakash})
+
+//deleting first document of a collection..
+--> db.collection_name.deleteOne({})
+
+//Deleting multiple collections...
+--> db.collection_name.deleteMany({age: 20})
+
+//deleting all the documents of a collection
+--> db.collection_name.deleteMany({})
+
+ //Using remove method(depricated method) to delete collection/collections
+ --> db.collection_name.remove({name: "aakah"}, true) //delete single document
+ --> db.collection_name.remove({name: "mark"}) //delete all documents with name-mark
+ --> db.collection_name.remove({}) //delete all documents from the collection
+
+ */
+
+---------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
+
+What is cursor in MongoDB?
+--> Cursor is a pointer to a list of document. If a collection contains large number of documents,
+then by using .find() method also we don't get all documents. What mongodb do is it returns the 
+document in batches(groups) and that batch is known as cursor.
+ 
+ //Using cursor method(toArray()) to return all documents or batches....
+ --> db.collection_name.find().toArray()  //toArray() mehtod request for other batches also....
+ --> db.collection_name.find().pretty()
+ -->db.collection_name.find().forEach(function(item){
+            print("Name: "+item.name)
+    }) //Prints the name only from all doucuments....
+
