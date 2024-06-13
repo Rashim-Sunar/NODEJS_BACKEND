@@ -1,6 +1,7 @@
 /*
 show dbs --> show database
 dbs --> current database
+db.stats --> status of database
 show collections --> collections in current database
 
 //Deleting database
@@ -89,4 +90,19 @@ document in batches(groups) and that batch is known as cursor.
  -->db.collection_name.find().forEach(function(item){
             print("Name: "+item.name)
     }) //Prints the name only from all doucuments....
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+EMBEDDED DOCUMETNS
+--> Those documents which are assigned to a filed inside a document. You can nest documents
+of maximum of 100 documents. A document can have maximum size of 16 MB. So, while embedding
+documents you should keep in mind that the outer document's size mustn't exceed size 16 MB.
+Example:
+--> db.mycol.insertMany([{name:'aakash', age: 20, marks:{maths:40, pp:42}},
+        {name: "bivek", age:20, marks:{maths: 52, pp:47}}])
+
+--> db.mycol.find({"marks.pp": 42}) //If dot operator is used, then wrap within quotation.
+--> db.mycol.updateOne({name:"aakash"}, {$set: {"marks.maths": 80}}) //Updating embedded document.
+--> db.mycol.findOne({name: "aaksh"}).marks   //Excessing the embedded document only...
 
