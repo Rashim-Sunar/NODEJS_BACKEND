@@ -1,0 +1,48 @@
+[
+    {
+      "name": "Movie One",
+      "duration": 120,
+      "description": "An epic adventure",
+      "rating": 4.5,
+      "totalRatings": 2500,
+      "releaseYear": 2022,
+      "releaseDate": "2022-06-01T00:00:00Z",
+      "createdAt": "2022-01-01T00:00:00Z",
+      "genres": ["Action", "Adventure"],
+      "directors": ["Director One"],
+      "coverImage": "http://example.com/movie1.jpg",
+      "actors": ["Actor One", "Actor Two"],
+      "price": 19.99
+    },
+    {
+      "name": "Movie Two",
+      "duration": 90,
+      "description": "A romantic comedy",
+      "rating": 3.8,
+      "totalRatings": 1500,
+      "releaseYear": 2021,
+      "releaseDate": "2021-05-15T00:00:00Z",
+      "createdAt": "2021-01-15T00:00:00Z",
+      "genres": ["Comedy", "Romance"],
+      "directors": ["Director Two"],
+      "coverImage": "http://example.com/movie2.jpg",
+      "actors": ["Actor Three", "Actor Four"],
+      "price": 14.99
+    },
+    {
+      "name": "Movie Three",
+      "duration": 105,
+      "description": "A gripping thriller",
+      "rating": 4.7,
+      "totalRatings": 3000,
+      "releaseYear": 2023,
+      "releaseDate": "2023-03-20T00:00:00Z",
+      "createdAt": "2023-01-01T00:00:00Z",
+      "genres": ["Thriller", "Mystery"],
+      "directors": ["Director Three"],
+      "coverImage": "http://example.com/movie3.jpg",
+      "actors": ["Actor Five", "Actor Six"],
+      "price": 24.99
+    }
+  ]
+  
