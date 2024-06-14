@@ -3,7 +3,18 @@ const Movie = require("../models/movieModel");
 //ROUTE HANDLER
 exports.getAllMovie = async(req,res)=>{ 
    try{
-      const movies = await Movie.find();
+
+      //Filtering the movies from string query...
+      //For eg. 127.0.0.1:3000/api/v1/movies/?duration=90&rating=4.5 , in this url after '?' duation and ratings are query strings..
+    //   console.log(req.query);
+      const movies = await Movie.find(req.query);
+
+    //Filtering movies by using mongoose filtering method
+    /*const movies = await Movie.find()
+            .where("duration").equals(req.query.duration)
+            .where("rating").equals(req.query.rating);
+    */
+
       res.status(200).json({
         status: "success",
         length: movies.length,
