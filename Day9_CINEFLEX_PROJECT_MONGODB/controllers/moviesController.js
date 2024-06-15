@@ -17,7 +17,7 @@ exports.getAllMovie = async(req,res)=>{
       //Filtering the movies from string query...
       //For eg. 127.0.0.1:3000/api/v1/movies/?duration=90&rating=4.5&sort=1&page=5 , in this url after '?' duation and ratings are query strings..
     //   console.log(req.query);
-      const movies = await Movie.find(req.query);
+    //   const movies = await Movie.find(req.query);
 
     //Filtering movies by using mongoose filtering method
     /*const movies = await Movie.find()
@@ -25,6 +25,14 @@ exports.getAllMovie = async(req,res)=>{
             .where("rating").equals(req.query.rating);
     */
 
+    //Advance filtering of movies Eg. url--> 127.0.0.1:3000/api/v1/movies/?duration[gte]=120&rating[gte]=4.5&price[lte]=50.0
+    let queryString = JSON.stringify(req.query);
+    // console.log(queryString)
+    queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match)=> `$${match}`); //using regular expression
+    const queryObj = JSON.parse(queryString);
+    // console.log(queryObj);
+    const movies = await Movie.find(queryObj);
+    // .find({duration: {$gte: 120}, rating: {$gte: 4.5}, price: {$lt: 50.0}}), mongodb find() method
 
       res.status(200).json({
         status: "success",
