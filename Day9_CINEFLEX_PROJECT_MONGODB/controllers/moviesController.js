@@ -4,8 +4,18 @@ const Movie = require("../models/movieModel");
 exports.getAllMovie = async(req,res)=>{ 
    try{
 
+    // For mongoose 6.0 or less
+    // const excludeFields = ['sort','page','limit','fields']; //fields to be excluded from query obj
+    // let queryObj = {...req.query} //creating shallow copy of query object..
+    // excludeFields.forEach((elem)=>{
+    //     delete queryObj[elem];
+    // });
+
+    // const movies = await Movie.find(queryObj);
+    // console.log(queryObj);
+
       //Filtering the movies from string query...
-      //For eg. 127.0.0.1:3000/api/v1/movies/?duration=90&rating=4.5 , in this url after '?' duation and ratings are query strings..
+      //For eg. 127.0.0.1:3000/api/v1/movies/?duration=90&rating=4.5&sort=1&page=5 , in this url after '?' duation and ratings are query strings..
     //   console.log(req.query);
       const movies = await Movie.find(req.query);
 
@@ -14,6 +24,7 @@ exports.getAllMovie = async(req,res)=>{
             .where("duration").equals(req.query.duration)
             .where("rating").equals(req.query.rating);
     */
+
 
       res.status(200).json({
         status: "success",
