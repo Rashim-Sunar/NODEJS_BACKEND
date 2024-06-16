@@ -1,5 +1,11 @@
 const Movie = require("../models/movieModel");
 
+exports.getHighestRated = (req, res, next) => {
+    req.query.limit = '2';
+    req.query.sort = '-ratings'
+    next();
+}
+
 //ROUTE HANDLER
 exports.getAllMovie = async(req,res)=>{ 
    try{
