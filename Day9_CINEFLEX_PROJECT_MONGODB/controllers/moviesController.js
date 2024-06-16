@@ -1,4 +1,5 @@
 const Movie = require("../models/movieModel");
+const ApiFeatures = require("./../Utils/ApiFeatures");
 
 exports.getHighestRated = (req, res, next) => {
     req.query.limit = '2';
@@ -9,7 +10,8 @@ exports.getHighestRated = (req, res, next) => {
 //ROUTE HANDLER
 exports.getAllMovie = async(req,res)=>{ 
    try{
-
+    
+    const features = new ApiFeatures(Movie.find(), req.query);
     // For mongoose 6.0 or less
     // const excludeFields = ['sort','page','limit','fields']; //fields to be excluded from query obj
     // let queryObj = {...req.query} //creating shallow copy of query object..
