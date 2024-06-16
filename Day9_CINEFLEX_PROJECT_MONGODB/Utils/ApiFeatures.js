@@ -9,18 +9,23 @@ class Apifeatures{
         let queryString = JSON.stringify(this.queryStr);
         queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match)=> `$${match}`); //using regular expression
         const queryObj = JSON.parse(queryString);
-        this.query = this.query.find(queryObj);
-        return this;
-    }
-
-    //Sorting movies on the basis of field...
-    sort(){
         const excludeFields = ['sort','page','limit','fields']; //fields to be excluded from query obj
         let newQueryObj = {...queryObj} //creating shallow copy of query object..
         excludeFields.forEach((elem)=>{
             delete newQueryObj[elem];
         });
-        this.query = this.query.find(newQueryObj); //returns query object so that we can use mongoose query method in it like .sort().
+        this.query = this.query.find(newQueryObj);
+        return this;
+    }
+
+    //Sorting movies on the basis of field...
+    sort(){
+        // const excludeFields = ['sort','page','limit','fields']; //fields to be excluded from query obj
+        // let newQueryObj = {...queryObj} //creating shallow copy of query object..
+        // excludeFields.forEach((elem)=>{
+        //     delete newQueryObj[elem];
+        // });
+        // this.query = this.query.find(newQueryObj); //returns query object so that we can use mongoose query method in it like .sort().
         
         if(this.queryStr.sort){
             const sortBy = this.queryStr.sort.split(",").join(" ");

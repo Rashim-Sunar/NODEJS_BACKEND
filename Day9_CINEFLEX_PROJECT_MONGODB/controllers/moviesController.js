@@ -10,8 +10,9 @@ exports.getHighestRated = (req, res, next) => {
 //ROUTE HANDLER
 exports.getAllMovie = async(req,res)=>{ 
    try{
-    
-    const features = new ApiFeatures(Movie.find(), req.query);
+    //On the instance of ApiFeatures class, chaining the different methods 
+    const features = new ApiFeatures(Movie.find(), req.query).filter().sort().limitFields().pagination();
+    let movies = await features.query;
     // For mongoose 6.0 or less
     // const excludeFields = ['sort','page','limit','fields']; //fields to be excluded from query obj
     // let queryObj = {...req.query} //creating shallow copy of query object..
@@ -32,7 +33,7 @@ exports.getAllMovie = async(req,res)=>{
             .where("duration").equals(req.query.duration)
             .where("rating").gte(req.query.rating);
     */
-
+/*
     //Advance filtering of movies Eg. url--> 127.0.0.1:3000/api/v1/movies/?duration[gte]=120&rating[gte]=4.5&price[lte]=50.0
     let queryString = JSON.stringify(req.query);
     // console.log(queryString)
@@ -84,6 +85,7 @@ exports.getAllMovie = async(req,res)=>{
 
 
     const movies = await query;
+    */
 
       res.status(200).json({
         status: "success",
@@ -167,4 +169,41 @@ exports.deleteMovie = async(req, res)=>{
         })
     }
   
+}
+
+//Usin aggregate pipeline...
+exports.getMovieStat = async(req, res) =>{
+    try{
+        const stats = await Movie.aggregate([
+            {$match: {duration: {$gte: 90}}},
+            // $group stage is applied to the documents satifying $match stage
+            {$group: {
+                // _id: null,  //Grouping in a single
+                _id: '$releaseYear',
+                avgRating: {$avg: '$rating'},
+                avgPrice: {$avg: '$price'},
+                maxPrice: {$max: '$price'},
+                minPrice: {$min: '$price'},
+                moviesCount: {$sum: 1}
+            }},
+         // sort stage is applied to the result og above two stages.
+         {$sort: { minprice: 1}}, //sorting in ascending order based on minprice
+        {$match: {maxPrice: {$gte: 20}}}
+
+        ]);
+
+        res.status(200).json({
+            status: "success",
+            length: stats.length,
+            data: {
+                stats
+            }
+        })
+
+    }catch(err){
+        res.status(404).json({
+            status: "fail",
+            message: err.message
+        })
+    }
 }
