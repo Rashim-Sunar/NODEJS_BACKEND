@@ -6,7 +6,9 @@ const router= express.Router(); //Creating a new router
 
 router.route("/get-highest").get(moviesController.getHighestRated,moviesController.getAllMovie)//Aliasing a route
 
+//Below two routes are for learing aggregate pipeline in mongodb...
 router.route("/movie-stats").get(moviesController.getMovieStat);
+router.route("/movie-by-genre/:genre").get(moviesController.getMovieByGenre);
 
 router.route("/")
     .get(moviesController.getAllMovie)

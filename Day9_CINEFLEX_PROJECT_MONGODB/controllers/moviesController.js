@@ -171,7 +171,7 @@ exports.deleteMovie = async(req, res)=>{
   
 }
 
-//Usin aggregate pipeline...
+//Using aggregate pipeline...
 exports.getMovieStat = async(req, res) =>{
     try{
         const stats = await Movie.aggregate([
@@ -188,7 +188,7 @@ exports.getMovieStat = async(req, res) =>{
             }},
          // sort stage is applied to the result og above two stages.
          {$sort: { minprice: 1}}, //sorting in ascending order based on minprice
-        {$match: {maxPrice: {$gte: 20}}}
+        {$match: {maxPrice: {$gte: 20}}},
 
         ]);
 
@@ -200,6 +200,44 @@ exports.getMovieStat = async(req, res) =>{
             }
         })
 
+    }catch(err){
+        res.status(404).json({
+            status: "fail",
+            message: err.message
+        })
+    }
+}
+
+//Some more stages and operators of aggregation pipeLine...
+exports.getMovieByGenre = async(req, res) => {
+    try{
+        let genre = req.params.genre;
+        console.log(genre)
+        const movies = await Movie.aggregate([
+            /*destructures a document with a field assigned with array and
+            and creates multiple documents from a document based on the array field*/
+            {$unwind: "$genres"} ,
+            {$group: {
+                _id: "$genres",
+                movieCount: {$sum: 1},
+                movies: {$push: '$name'} //pushing the movie with same genre in movies field
+            }},
+
+            {$addFields: {genre: "$_id"}},
+            {$project: {_id: 0}}, //specify which fields to return and not (1 means return)
+            {$sort: {movieCount: -1}}, //sorting in descending order by movieCount field.
+            // {$limit: 3},
+            {$match: {genre: genre}}
+
+        ]);
+
+        res.status(200).json({
+            status: "success",
+            length: movies.length,
+            data: {
+                movies
+            }
+        })
     }catch(err){
         res.status(404).json({
             status: "fail",
