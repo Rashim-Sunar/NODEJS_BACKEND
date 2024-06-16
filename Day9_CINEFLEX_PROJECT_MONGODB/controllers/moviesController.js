@@ -36,8 +36,12 @@ exports.getAllMovie = async(req,res)=>{
 
     //Sotring movies on the basis of field...
     //127.0.0.1:3000/api/v1/movies/?sort=-price,rating  --> -ve sign for descending order
-    
-    let query = Movie.find(); //returns query object so that we can use mongoose query method in it like .sort().
+    const excludeFields = ['sort','page','limit','fields']; //fields to be excluded from query obj
+    let newQueryObj = {...queryObj} //creating shallow copy of query object..
+    excludeFields.forEach((elem)=>{
+        delete newQueryObj[elem];
+    });
+    let query = Movie.find(newQueryObj); //returns query object so that we can use mongoose query method in it like .sort().
     
     if(req.query.sort){
         const sortBy = req.query.sort.split(",").join(" ");
