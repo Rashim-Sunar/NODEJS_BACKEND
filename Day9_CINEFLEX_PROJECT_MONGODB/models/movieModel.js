@@ -33,7 +33,8 @@ const movieSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now(),
+        select: false // i.e. createdAt field is never shown to the user..
     },
     genres: {
         type: [String], //array of strings..

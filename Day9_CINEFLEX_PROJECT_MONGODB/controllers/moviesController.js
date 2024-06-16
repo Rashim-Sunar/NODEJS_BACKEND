@@ -34,7 +34,7 @@ exports.getAllMovie = async(req,res)=>{
     // const movies = await Movie.find(queryObj);
     // .find({duration: {$gte: 120}, rating: {$gte: 4.5}, price: {$lt: 50.0}}), mongodb find() method
 
-    //Sotring movies on the basis of field...
+    //Sorting movies on the basis of field...
     //127.0.0.1:3000/api/v1/movies/?sort=-price,rating  --> -ve sign for descending order
     const excludeFields = ['sort','page','limit','fields']; //fields to be excluded from query obj
     let newQueryObj = {...queryObj} //creating shallow copy of query object..
@@ -50,6 +50,16 @@ exports.getAllMovie = async(req,res)=>{
                 // query.sort('releaseYear rating'); -->if sort field consists multiple elements
     }else{
         query = query.sort("-createdAt"); //newly created at the top.
+    }
+
+    //LIMITING FIELDS - (returns those fields only which are requested by user.)
+    // 127.0.0.1:3000/api/v1/movies/?rating[lte]=4.6&sort=duration&fields=name,duration,ratings,price
+    if(req.query.fields){
+        const fields = req.query.fields.split(",").join(" ");
+        query = query.select(fields) //.select() is also a mongoose query method...
+                // .select("name price duration description") --> contains the fields which are to be returned 
+    }else{
+        query = query.select("-__v"); //Selecting all fields except __v using '-' (i.e. excluding field __v)
     }
     
     const movies = await query;
