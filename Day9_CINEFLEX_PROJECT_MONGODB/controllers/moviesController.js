@@ -61,7 +61,20 @@ exports.getAllMovie = async(req,res)=>{
     }else{
         query = query.select("-__v"); //Selecting all fields except __v using '-' (i.e. excluding field __v)
     }
-    
+
+    // PAGINATION.....
+    const page = req.query.page*1 || 1;
+    const limit = req.query.limit*1; //specify how many movies in one page? 
+    const skip = (page-1)*limit; //number of movies to skip for the given page..
+    query = query.skip(skip).limit(limit); //specify which page to show how many documents.
+    if(req.query.page){
+        const moviesCount = await Movie.countDocuments();
+        if(skip >= moviesCount){
+            throw new Error("This page is not found");
+        }
+    }
+
+
     const movies = await query;
 
       res.status(200).json({
