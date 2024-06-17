@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const fs = require('fs');
 
 const movieSchema = new mongoose.Schema({
     name:{
@@ -11,6 +12,7 @@ const movieSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Duration field is required"],
     },
+    createdBy: String,
     description: {
         type: String,
         trim: true,
@@ -66,6 +68,27 @@ const movieSchema = new mongoose.Schema({
 movieSchema.virtual("durationInHours").get(function(){
     return this.duration / 60;
 })
+
+//MONGOOSE OR DOCUMENT MIDDLEWARE--> runs before or after mongoose event happens(eg. save, update, delete, etc.)
+
+//Executed before document is saved(pre-hook)...
+//save event is triggered only is .save() or .create() method is performed. 
+movieSchema.pre('save', function(next) {
+    // console.log(this);
+    this.createdBy = "Rashim";
+    next();
+});
+
+//post hook --> executes after document is saved..
+movieSchema.post('save', function(doc, next){
+    let content = `A new movie with name ${doc.name} has been created by user ${doc.createdBy}\n`;
+    fs.writeFileSync("./Log/log.txt", content, {flag: 'a'}, (err)=>{
+        console.log(err.message);
+    });
+
+    next();
+})
+
 
 const Movie = mongoose.model('movie', movieSchema);
 
