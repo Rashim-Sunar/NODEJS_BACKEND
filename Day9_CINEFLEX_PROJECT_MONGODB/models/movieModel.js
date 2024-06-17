@@ -69,13 +69,16 @@ movieSchema.virtual("durationInHours").get(function(){
     return this.duration / 60;
 })
 
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+
 //MONGOOSE OR DOCUMENT MIDDLEWARE--> runs before or after mongoose event happens(eg. save, update, delete, etc.)
 
 //Executed before document is saved(pre-hook)...
 //save event is triggered only is .save() or .create() method is performed. 
 movieSchema.pre('save', function(next) {
-    // console.log(this);
-    this.createdBy = "Rashim";
+    // console.log(this); //Here, this keyword points to document object
+    this.createdBy = "Rashim"; 
     next();
 });
 
@@ -88,6 +91,50 @@ movieSchema.post('save', function(doc, next){
 
     next();
 })
+
+//-----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
+
+// QUERY MIDDLEWARE IN MONGOOSE...-->runs before or after certain query is done..
+/*
+movieSchema.pre('find', function(next){
+    //Here, this keywowrd stores a query object since, .find() method emits find event along with query object.
+    this.find({releaseDate: {$lte: Date.now()}});
+    // database may contain the information of the movies which are not yet released, is such case we shouldn't
+    //return those movies which are not yet published. So returning released movie only... 
+    next();
+})
+*/
+//Above query method is only applied for find() method but not for others like findOne(), findByIdAndDelete(), etc.
+//So using regular expression so that query middleware is applied to all methods which started by 'find' word.
+movieSchema.pre(/^find/, function(next) {
+    this.find({releaseDate: {$lte: Date.now()}});
+    this.startTime = Date.now();
+    next();
+}) 
+//Calculating time to fetch the documents
+movieSchema.post(/^find/, function(docs, next) {
+    this.find({releaseDate: {$lte: Date.now()}});
+    this.endTime = Date.now();
+    let content = `Query took ${this.endTime - this.startTime} milliseconds to fetch the document\n`;
+    fs.writeFileSync("./Log/log.txt", content, {flag: 'a'}, (err)=>{
+        console.log(err.message);
+    });
+    next();
+}) 
+
+//--------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------
+
+//AGGREGATION MIDDLEWARE --> we should perform aggregation on the movies which are already released. So, we can use aggregate middleware
+// to filter the already released movies..
+
+movieSchema.pre('aggregate', function(next){
+    // console.log(this.pipeline()); //Here, this keyword points to currently processign aggregation object
+    this.pipeline().unshift({$match: {releaseDate: {$lte: new Date()}}});  // .unshift() method is used to add element at beggining of array.
+    next();
+})
+
 
 
 const Movie = mongoose.model('movie', movieSchema);

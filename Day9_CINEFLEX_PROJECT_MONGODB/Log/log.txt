@@ -1,2 +1,8 @@
 A new movie with name Inception Part-7 has been created by user Rashim
-A new movie with name Inception Part-8 has been created by user Rashim
+A new movie with name Inception Part-8 has been created by user RashimA new movie with name Sample movie has been created by user Rashim
+Query took NaN to fetch the document
+Query took NaN to fetch the document
+Query took NaN to fetch the document
+Query took NaN to fetch the document
+Query took NaN to fetch the document
+Query took 8 to fetch the document
