@@ -56,7 +56,16 @@ const movieSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Price is required field"]
     }
+}, {
+    toJSON: {virtuals: true}, //When we output the data in JSON format, then setting virtual properties too.
+    toObject: {virtuals: true}//WHen output data in object format, then return virtual properties also.
 });
+
+//Creating virtual fields i.e these fields are not stored in database but returned to the user
+//We can't use virtual fields for query, like Movie.find({durationInHours: 2}), wrong...
+movieSchema.virtual("durationInHours").get(function(){
+    return this.duration / 60;
+})
 
 const Movie = mongoose.model('movie', movieSchema);
 
