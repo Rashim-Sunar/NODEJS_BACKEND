@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
+//You can also use validatorjs to validate the fields
 
 const movieSchema = new mongoose.Schema({
     name:{
@@ -24,8 +25,17 @@ const movieSchema = new mongoose.Schema({
     rating: {
         type: Number,
         // default: 1.0
-        min: [1, "rating must be 1.0 or more"],
-        max: [10, "rating must be 10.0 or below"]
+        //Built-in validator
+        // min: [1, "rating must be 1.0 or more"],
+        // max: [10, "rating must be 10.0 or below"]
+
+        //MONGOOSE CUSTOM VALIDATOR...
+        validate:{
+            validator: function(value){
+                return value >= 1 && value <= 10;
+            },
+            message: "Rating {VALUE} must be 1 or above 1 and below 10 or exactly 10."
+        }
     },
     totalRatings: {
         type: Number
