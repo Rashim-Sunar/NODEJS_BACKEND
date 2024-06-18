@@ -6,3 +6,4 @@ Query took NaN to fetch the document
 Query took NaN to fetch the document
 Query took NaN to fetch the document
 Query took 8 to fetch the document
+A new movie with name abs has been created by user Rashim
