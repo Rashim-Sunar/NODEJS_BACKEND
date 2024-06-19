@@ -1,15 +1,16 @@
+const customError = require("../Utils/customError");
 const Movie = require("../models/movieModel");
 const ApiFeatures = require("./../Utils/ApiFeatures");
+const asyncErrorHandler = require('./../Utils/asyncErrorHandler');
 
 exports.getHighestRated = (req, res, next) => {
     req.query.limit = '2';
-    req.query.sort = '-ratings'
+    req.query.sort = '-ratings';
     next();
 }
 
 //ROUTE HANDLER
-exports.getAllMovie = async(req,res)=>{ 
-   try{
+exports.getAllMovie = asyncErrorHandler(async(req, res, next)=>{ 
     //On the instance of ApiFeatures class, chaining the different methods 
     const features = new ApiFeatures(Movie.find(), req.query).filter().sort().limitFields().pagination();
     let movies = await features.query;
@@ -94,33 +95,27 @@ exports.getAllMovie = async(req,res)=>{
             movies
         }
       });
-   }catch(error){
-    res.status(400).json({
-        status: "fail",
-        message: error.message
-    });
-   }
-} 
+}); 
 
-exports.getMovie = async(req, res)=>{
-    try{
+exports.getMovie = asyncErrorHandler(async(req, res, next)=>{
         const movie = await Movie.findById(req.params.id);
-        res.status(200).json({
+         //If movie with id is not found, then create a custom error and call globalErrorHandling..
+         if(!movie){
+            const err = new customError("Movie with that ID doesn't exist.", 404); //FILE NOT FOUND ERROR.
+            return next(err); //calling global error handling.
+         }
+
+        res.status(201).json({
             status: "success",
             data: {
                 movie
             }
         })
-    }catch(error){
-    res.status(400).json({
-        status: "fail",
-        message: error.message
-    });
-   }
-}
+});
 
-exports.createMovie = async(req,res)=>{
-    try{
+
+//Error handled in async function without using try..catch block. Similarly, we can use for other route handling functions..
+exports.createMovie = asyncErrorHandler(async(req, res, next)=>{ //Here, async function is passed as parameter.
         const movie =await Movie.create(req.body);
         res.status(200).json({
             status: "success",
@@ -128,52 +123,43 @@ exports.createMovie = async(req,res)=>{
                 movie
             }
         })
-    }catch(err){
-        res.status(400).json({
-            status: "fail",
-            message: err.message
-        })
-    }
-}
+});
 
-exports.updateMovie = async(req, res)=>{
-    try{
+exports.updateMovie = asyncErrorHandler(async(req, res, next)=>{
         const movie = await Movie.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true});
-        res.status(200).json({
-            status: "success",
-            data: {
-                movie
-            }
-        })
-    }catch(error){
-        res.status(400).json({
-            status: "fail",
-            message: error.message
-        })
-    }
-}
+        //If movie with id is not found, then create a custom error and call globalErrorHandling..
+        if(!movie){
+            const err = new customError("Movie with that ID doesn't exist.", 404); //FILE NOT FOUND ERROR.
+            return next(err); //calling global error handling.
+         }
 
-exports.deleteMovie = async(req, res)=>{
-    try{
-        const movie = await Movie.findByIdAndDelete(req.params.id);
         res.status(200).json({
             status: "success",
             data: {
                 movie
             }
         })
-    }catch(error){
-        res.status(400).json({
-            status: "fail",
-            message: error.message
+    
+});
+
+exports.deleteMovie = asyncErrorHandler(async(req, res, next)=>{
+        const movie = await Movie.findByIdAndDelete(req.params.id);
+        //If movie with id is not found, then create a custom error and call globalErrorHandling..
+        if(!movie){
+            const err = new customError("Movie with that ID doesn't exist.", 404); //FILE NOT FOUND ERROR.
+            return next(err); //calling global error handling.
+         }
+
+        res.status(204).json({
+            status: "success",
+            data: {
+                movie
+            }
         })
-    }
-  
-}
+});
 
 //Using aggregate pipeline...
-exports.getMovieStat = async(req, res) =>{
-    try{
+exports.getMovieStat = asyncErrorHandler(async(req, res, next) =>{
         const stats = await Movie.aggregate([
             {$match: {duration: {$gte: 90}}},
             // $group stage is applied to the documents satifying $match stage
@@ -199,18 +185,10 @@ exports.getMovieStat = async(req, res) =>{
                 stats
             }
         })
-
-    }catch(err){
-        res.status(404).json({
-            status: "fail",
-            message: err.message
-        })
-    }
-}
+});
 
 //Some more stages and operators of aggregation pipeLine...
-exports.getMovieByGenre = async(req, res) => {
-    try{
+exports.getMovieByGenre = asyncErrorHandler(async(req, res, next) => {
         let genre = req.params.genre;
         console.log(genre)
         const movies = await Movie.aggregate([
@@ -238,10 +216,4 @@ exports.getMovieByGenre = async(req, res) => {
                 movies
             }
         })
-    }catch(err){
-        res.status(404).json({
-            status: "fail",
-            message: err.message
-        })
-    }
-}
+});

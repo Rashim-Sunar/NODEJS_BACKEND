@@ -14,3 +14,10 @@ Query took 8 milliseconds to fetch the document
 Query took 10 milliseconds to fetch the document
 Query took 6 milliseconds to fetch the document
 Query took 4 milliseconds to fetch the document
+A new movie with name dafafdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa has been created by user Rashim
+Query took 10 milliseconds to fetch the document
+A new movie with name dafafdaaaaaaaaaaaaaaaaaaaaa has been created by user Rashim
+Query took 6 milliseconds to fetch the document
+Query took 6 milliseconds to fetch the document
+Query took 3 milliseconds to fetch the document
+Query took 3 milliseconds to fetch the document
