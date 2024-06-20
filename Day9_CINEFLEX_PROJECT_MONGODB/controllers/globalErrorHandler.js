@@ -1,3 +1,5 @@
+const customError = require("../Utils/customError");
+
 //Development errors are visible to the developer
 const devError = (res, error) => {
     res.status(error.statusCode).json({
@@ -24,6 +26,12 @@ const productionError = (res, error) => {
     }
 }
 
+//castError handler
+const castErrorHandler = (err) => {
+    const msg = `Invalid value for ${err.path}: ${err.value} !`;
+    return new customError(msg, 400);
+}
+
 module.exports = (error, req, res, next)=>{
     error.statusCode = error.statusCode || 500; //500 is for internal server error..
     error.status = error.status || 'error';
@@ -31,6 +39,10 @@ module.exports = (error, req, res, next)=>{
     if(process.env.NODE_ENV === 'development'){
         devError(res, error);
     }else if(process.env.NODE_ENV === 'production'){
+       if(error.name === "CastError"){
+        //Handling invalid id error
+         error = castErrorHandler(error);
+       }
        productionError(res, error);
     }
 }
