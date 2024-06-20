@@ -39,6 +39,15 @@ const keyDuplicationErrorHandler = (err) => {
     return new customError(msg, 400);
 }
 
+//Handling validation Error caused by mongoose validation
+const validationErrorHandler = (err) => {
+    let errors = Object.values(err.errors).map(data => data.message); //Extraction array of error messages..
+    const errorMessage = errors.join(". ");
+    const msg = `Invalid Input data:  ${errorMessage}`;
+
+    return new customError(msg, 400); //making a operational error using global error handling...
+}
+
 module.exports = (error, req, res, next)=>{
     error.statusCode = error.statusCode || 500; //500 is for internal server error..
     error.status = error.status || 'error';
@@ -51,6 +60,9 @@ module.exports = (error, req, res, next)=>{
        
        //Handling key duplication error in database...
        if(error.code === 11000) error = keyDuplicationErrorHandler(error);
+
+       //Handling validation error in caused by mongoose validation..
+       if(error.name === "ValidationError") error = validationErrorHandler(error);
 
        productionError(res, error);
     }
