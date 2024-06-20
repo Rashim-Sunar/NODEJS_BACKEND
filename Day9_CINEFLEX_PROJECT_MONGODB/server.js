@@ -14,9 +14,10 @@ mongoose.connect(url, {
 }).then((con)=>{
     // console.log(con);
     console.log("Database connected successfully");
-}).catch((err)=>{
-    console.log("Error conneting to databse");
-});
+})
+// .catch((err)=>{
+//     console.log("Error conneting to databse");
+// });
 
 // const m1 = new Movie({
 //     name: "Heropanti3",
@@ -28,6 +29,15 @@ mongoose.connect(url, {
 //     .then(doc => console.log(doc))
 //     .catch(err => console.log("Error creating document",err.message));
 
-app.listen(port,()=>{
+const server = app.listen(port,()=>{
     console.log("Server has started on port",port)
+});
+
+//Handling rejected promises globally.. There are some errors which occurs outside express like mongodb connection. These can be handled as follows...
+process.on("unhandledRejection" ,(error)=>{
+    console.log(error.name, error.message);
+    console.log("unhandledRejection occured! Shutting down.....");
+    server.close(()=>{
+        process.exit(1);
+    })
 });
