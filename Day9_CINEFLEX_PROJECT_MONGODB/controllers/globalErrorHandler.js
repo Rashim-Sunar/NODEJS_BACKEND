@@ -18,7 +18,7 @@ const productionError = (res, error) => {
             status: error.status,
             message: error.message
         });
-    }else{  //else (non-operational errror)server error has occured, so send server error.
+    }else{  //else (non-operational errror)server error has occured, so send server error (eg. name duplication error sent by mongodb).
         res.status(500).json({
             status: "error",
             message: "Seems like something went wrong. Please try later!"
@@ -32,6 +32,13 @@ const castErrorHandler = (err) => {
     return new customError(msg, 400);
 }
 
+//Handling duplicate key error in creating a movie in database....
+const keyDuplicationErrorHandler = (err) => {
+    const name = err.keyValue.name;
+    const msg = `A movie with name ${name} already exists. Please use another name!`;
+    return new customError(msg, 400);
+}
+
 module.exports = (error, req, res, next)=>{
     error.statusCode = error.statusCode || 500; //500 is for internal server error..
     error.status = error.status || 'error';
@@ -39,10 +46,12 @@ module.exports = (error, req, res, next)=>{
     if(process.env.NODE_ENV === 'development'){
         devError(res, error);
     }else if(process.env.NODE_ENV === 'production'){
-       if(error.name === "CastError"){
         //Handling invalid id error
-         error = castErrorHandler(error);
-       }
+       if(error.name === "CastError") error = castErrorHandler(error);
+       
+       //Handling key duplication error in database...
+       if(error.code === 11000) error = keyDuplicationErrorHandler(error);
+
        productionError(res, error);
     }
 }

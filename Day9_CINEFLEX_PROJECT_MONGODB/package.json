@@ -4,7 +4,8 @@
   "description": "working with express rest api",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "NODE_ENV=development nodemon server.js",
+    "start_prod": "NODE_ENV=production nodemon server.js"
   },
   "author": "rashim sunar",
   "license": "ISC",
