@@ -1,13 +1,19 @@
 const dotenv = require('dotenv');
 dotenv.config({path:"./config.env"});
-
-const app = require('./app');
-const mongoose = require('mongoose');
-
-const Movie = require('./models/movieModel');
-
 const port = process.env.PORT || 3000;
 const url = process.env.CONNECT_STR;
+const mongoose = require('mongoose');
+const Movie = require('./models/movieModel');
+
+
+//Handling uncaught error for synchronous codes.. This handling must be at the top of the codes before importing app module.
+process.on("uncaughtException", (err) => {
+    console.log(err.name+ ": " +err.message);
+    console.log("Uncaught Error has been handled");
+    process.exit(1);
+})
+
+const app = require('./app');
 
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -41,3 +47,11 @@ process.on("unhandledRejection" ,(error)=>{
         process.exit(1);
     })
 });
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+//UNCAUGHT EXCEPTIONS 
+//  --> All the errors that occurs in our synchronous code but are not handled anywhere are called uncaught exceptions. It doesn't have anything to do with the server.
+//     In our application, we don't have any uncaught exceptions, so let's introduce an uncaught exception by trying to log an undefined variable 'x'.
+
+console.log(x);  //Here, you get an error, x is not defined. This is uncaught exception, since it runs synchronously.
