@@ -2,12 +2,14 @@ const express = require("express");
 const app = express();
 
 const moviesRouter = require('./Routes/moviesRouter');
+const authRouter = require('./Routes/authRouter');
 const customError = require("./Utils/customError");
 const globalErrorHandler = require("./controllers/globalErrorHandler");
 
 app.use(express.json())
 
 app.use("/api/v1/movies",moviesRouter); 
+app.use("/api/v1/user", authRouter);
 
 //Creating a default route. 
 app.all("*", (req, res, next)=>{

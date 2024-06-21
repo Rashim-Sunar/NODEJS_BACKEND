@@ -54,4 +54,4 @@ process.on("unhandledRejection" ,(error)=>{
 //  --> All the errors that occurs in our synchronous code but are not handled anywhere are called uncaught exceptions. It doesn't have anything to do with the server.
 //     In our application, we don't have any uncaught exceptions, so let's introduce an uncaught exception by trying to log an undefined variable 'x'.
 
-console.log(x);  //Here, you get an error, x is not defined. This is uncaught exception, since it runs synchronously.
+// console.log(x);  //Here, you get an error, x is not defined. This is uncaught exception, since it runs synchronously.
