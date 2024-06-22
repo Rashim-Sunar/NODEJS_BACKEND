@@ -59,12 +59,12 @@ exports.login = asyncErrorHandler(async(req, res, next)=>{
 });
 
 
-//PROTECTING ROUTES
+//PROTECTING ROUTES -- Middleware to verify token from user...
 exports.protect = asyncErrorHandler(async(req, res, next)=>{
     //1.Read the token and check if it exists
     const testToken = req.headers.authorization;
     let token;
-    if(testToken && testToken.startsWith('bearer')){
+    if(testToken && testToken.startsWith('Bearer')){
         token = testToken.split(" ")[1];
     }
     if(!token){
@@ -76,10 +76,19 @@ exports.protect = asyncErrorHandler(async(req, res, next)=>{
     console.log(decodedToken);
 
     //3.If the user exists.
+    const user = await User.findById(decodedToken.id);
+    if(!user){
+        const err = new customError('The user with the given token does not exist.', 401);
+        next(err);
+    }
 
     //4.If the user chnaged password after the token was issued
+    const isChanged = await user.isPasswordChanged(decodedToken.iat);
+    if(isChanged){
+        const err = new customError("Password is changed recently. Please login again!", 401);
+        next(err);
+    }
 
     //5. Allow user to accessf routes
-
     next();
 });

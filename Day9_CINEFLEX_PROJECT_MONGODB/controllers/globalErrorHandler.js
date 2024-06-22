@@ -53,7 +53,7 @@ const handleExpiredJWT = (err) => {
 }
 
 const handleJWTError = (err) => {
-    return new customError("Invalid JWT. Please login again!", 401);
+    return new customError("Invalid token. Please login again!", 401);
 }
 
 module.exports = (error, req, res, next)=>{

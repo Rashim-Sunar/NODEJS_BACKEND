@@ -32,7 +32,8 @@ const userSchema = new mongoose.Schema({
             },
             message: "Password and confirm passoword doesn't match!"
         }
-    }
+    },
+    passwordChangedAt: Date
 });
 
 //Mongoose document middleware for encrypting password before it is saved..(after chnaging the current user passoword too)
@@ -49,6 +50,15 @@ userSchema.pre('save', async function(next){
 //Creating a instance method -> A instance method is available to all the documents of a collection. i.e. to all the instance of userModel(this file).
 userSchema.methods.comparePasswordInDB = async function(pswd, pswdDB){
     return bcrypt.compare(pswd, pswdDB);
+}
+
+userSchema.methods.isPasswordChanged = async function(JWTTimeStamp){
+    if(this.passwordChangedAt){
+        // console.log(this.passwordChangedAt, JWTTimeStamp);
+        const pswdChangedTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10); //Converting data to seconds
+        return JWTTimeStamp < pswdChangedTimeStamp;
+    }
+    return false;
 }
 
 const User = mongoose.model('user', userSchema);
