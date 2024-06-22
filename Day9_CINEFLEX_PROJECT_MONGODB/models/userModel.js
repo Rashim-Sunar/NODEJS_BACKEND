@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, "Enter your password"],
-        minlength: 5
+        minlength: 5,
+        select: false //means that it is not returned in response
     },
 
     confirmPassword: {
@@ -42,7 +43,13 @@ userSchema.pre('save', async function(next){
     this.password = await bcrypt.hash(this.password, 12);
     this.confirmPassword = undefined; //not storing confirmPassword in database(only for validation purpose)
     next();
-})
+});
+
+//Creating a function to compare the password which we are receing in the body with the password that is saved in database.
+//Creating a instance method -> A instance method is available to all the documents of a collection. i.e. to all the instance of userModel(this file).
+userSchema.methods.comparePasswordInDB = async function(pswd, pswdDB){
+    return bcrypt.compare(pswd, pswdDB);
+}
 
 const User = mongoose.model('user', userSchema);
 
