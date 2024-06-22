@@ -1,6 +1,7 @@
 
 const express = require('express');
 const moviesController = require("../controllers/moviesController");
+const authController = require("./../controllers/authController");
 
 const router= express.Router(); //Creating a new router
 
@@ -11,7 +12,7 @@ router.route("/movie-stats").get(moviesController.getMovieStat);
 router.route("/movie-by-genre/:genre").get(moviesController.getMovieByGenre);
 
 router.route("/")
-    .get(moviesController.getAllMovie)
+    .get(authController.protect, moviesController.getAllMovie)
     .post(moviesController.createMovie) 
     //middleware chaining...first validation middleware is run and then createMovie middleware function is run.
 

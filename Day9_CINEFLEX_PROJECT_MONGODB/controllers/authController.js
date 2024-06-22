@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const asyncErrorHandler = require('./../Utils/asyncErrorHandler');
 const jwt = require('jsonwebtoken');
 const customError = require("./../Utils/customError");
+const util = require('util')
 
 const signToken = (id) => {
     return jwt.sign({id}, process.env.SECRET_STR, {
@@ -55,4 +56,30 @@ exports.login = asyncErrorHandler(async(req, res, next)=>{
         status: "success",
         token
     });
+});
+
+
+//PROTECTING ROUTES
+exports.protect = asyncErrorHandler(async(req, res, next)=>{
+    //1.Read the token and check if it exists
+    const testToken = req.headers.authorization;
+    let token;
+    if(testToken && testToken.startsWith('bearer')){
+        token = testToken.split(" ")[1];
+    }
+    if(!token){
+        next(new customError("You are not logged in. Please login first", 401));
+    }
+
+    //2. Validate the token.
+    const decodedToken = await util.promisify(jwt.verify)(token, process.env.SECRET_STR);
+    console.log(decodedToken);
+
+    //3.If the user exists.
+
+    //4.If the user chnaged password after the token was issued
+
+    //5. Allow user to accessf routes
+
+    next();
 });

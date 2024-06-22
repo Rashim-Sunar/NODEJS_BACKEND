@@ -48,6 +48,14 @@ const validationErrorHandler = (err) => {
     return new customError(msg, 400); //making a operational error using global error handling...
 }
 
+const handleExpiredJWT = (err) => {
+    return new customError("JWT has expired. Please login again!", 401);
+}
+
+const handleJWTError = (err) => {
+    return new customError("Invalid JWT. Please login again!", 401);
+}
+
 module.exports = (error, req, res, next)=>{
     error.statusCode = error.statusCode || 500; //500 is for internal server error..
     error.status = error.status || 'error';
@@ -64,6 +72,10 @@ module.exports = (error, req, res, next)=>{
        //Handling validation error in caused by mongoose validation..
        if(error.name === "ValidationError") error = validationErrorHandler(error);
 
+       if(error.name === "TokenExpiredError") error = handleExpiredJWT(error);
+
+       if(error.name === "JsonWebTokenError") error = handleJWTError(error);
+ 
        productionError(res, error);
     }
 }
