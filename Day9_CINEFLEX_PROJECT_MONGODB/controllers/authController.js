@@ -106,3 +106,22 @@ exports.restrict = (role) => {
         next();
     }
 }
+
+
+exports.forgotPassword = asyncErrorHandler(async(req, res, next) => {
+    //1.GET THE USER BASED ON POSTED EMAIL
+        const user = await User.findOne({email: req.body.email});
+        if(!user){
+            const err = new customError("We could not find the user with given email address!", 404);
+            next(err);
+        }
+
+    //2. GENERATE A RANDOM TOKEN
+    const resetToken = await user.createRestPasswordToken(); 
+    await user.save({validateBeforeSave: false});
+    //3. SEND THE TOKEN BACK TO THE USER EMAIL
+});
+
+exports.resetPassword = asyncErrorHandler(async(req, res, next) => {
+
+});

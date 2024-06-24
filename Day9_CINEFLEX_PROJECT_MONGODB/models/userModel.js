@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -39,7 +40,9 @@ const userSchema = new mongoose.Schema({
             message: "Password and confirm passoword doesn't match!"
         }
     },
-    passwordChangedAt: Date
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetTokenExpires: Date
 });
 
 //Mongoose document middleware for encrypting password before it is saved..(after chnaging the current user passoword too)
@@ -65,6 +68,18 @@ userSchema.methods.isPasswordChanged = async function(JWTTimeStamp){
         return JWTTimeStamp < pswdChangedTimeStamp;
     }
     return false;
+}
+
+userSchema.methods.createRestPasswordToken = function(){
+    const resetToken = crypto.randomBytes(32).toString('hex'); //resetToken here will be a plain token(not encrypted).
+
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    this.passwordResetTokenExpires = Date.now() + 10*60*1000; //Expires in 10 min
+    console.log(resetToken, this.passwordResetToken, this.passwordResetTokenExpires); //these two fields are not yet saved in the database, so we need to save it which is done in respective function
+
+    return resetToken;
+    //Here, we return plain token to the user but stores the encrypted token in database so that attackers if get control to database can perform the password reset functionality
+    // When user send this token back, then we compare this plain token to the encrypted token in the database
 }
 
 const User = mongoose.model('user', userSchema);
