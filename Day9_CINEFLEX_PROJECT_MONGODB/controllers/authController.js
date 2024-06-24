@@ -90,5 +90,19 @@ exports.protect = asyncErrorHandler(async(req, res, next)=>{
     }
 
     //5. Allow user to accessf routes
+    req.user = user; //Attach the currently loggedin user along with req object so that it can be used for strict function below..
     next();
 });
+
+//Wrapper function for verifying if client can delete a movie. Only admin can delete the movie. In middleware function, we can only pass req, res, and next as arguement.
+//That's why we are creating a wrapper function which can take any arguement and then, inside wrapper, we are introducing a middleware function..
+exports.restrict = (role) => {
+    return (req, res, next)=>{
+        if(req.user.role !== role){
+            const err = new customError("You do not have access to perform this action", 403);
+            next(err);
+        }
+
+        next();
+    }
+}

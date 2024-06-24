@@ -17,8 +17,8 @@ router.route("/")
     //middleware chaining...first validation middleware is run and then createMovie middleware function is run.
 
 router.route("/:id")
-    .get(moviesController.getMovie)
+    .get(authController.protect, moviesController.getMovie)
     .patch(moviesController.updateMovie)
-    .delete(moviesController.deleteMovie)
+    .delete(authController.protect, authController.restrict('admin'), moviesController.deleteMovie) //delete functionality is only given to admin, so restricting for user..
 
 module.exports = router
