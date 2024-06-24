@@ -3,6 +3,7 @@ const asyncErrorHandler = require('./../Utils/asyncErrorHandler');
 const jwt = require('jsonwebtoken');
 const customError = require("./../Utils/customError");
 const util = require('util')
+const sendEmail = require('./../Utils/email');
 
 const signToken = (id) => {
     return jwt.sign({id}, process.env.SECRET_STR, {
@@ -119,7 +120,30 @@ exports.forgotPassword = asyncErrorHandler(async(req, res, next) => {
     //2. GENERATE A RANDOM TOKEN
     const resetToken = await user.createRestPasswordToken(); 
     await user.save({validateBeforeSave: false});
-    //3. SEND THE TOKEN BACK TO THE USER EMAIL
+    
+    //3. SEND THE TOKEN BACK TO THE USER EMAIL --> npm install nodemailer
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/user/resetPassword/${resetToken}`;
+    const message = `We have received a password reset request. Please use the below link to rest your password\n\n
+        ${resetUrl}\nThis url is valid for next 10 minutes only.`
+    try{
+        await sendEmail({
+            email: user.email,
+            subject: 'Password change request received.',
+            message: message
+        });
+
+        res.status(200).json({
+            status: 'success',
+            message: "Password reset link sent to the email"
+        });
+
+    }catch(error){
+        user.passwordResetToken = undefined;
+        user.passwordResetTokenExpires = undefined;
+        user.save();
+
+        return next(new customError("There is an error sending password reset email. Please try again."), 500);
+    }
 });
 
 exports.resetPassword = asyncErrorHandler(async(req, res, next) => {
