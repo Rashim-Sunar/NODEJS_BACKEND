@@ -12,6 +12,18 @@ const signToken = (id) => {
     })
 }
 
+// const createSendResponse = (user, statusCode, res) => {
+//     const token = signToken(user._id);
+
+//     res.status(statusCode).json({
+//         status: "success",
+//         token,
+//         data: {
+//             user
+//         }
+//     });
+// }
+
 //route handler middleware...
 exports.signup = asyncErrorHandler(async(req, res, next)=>{
         const newUser = await User.create(req.body);
@@ -147,6 +159,8 @@ exports.forgotPassword = asyncErrorHandler(async(req, res, next) => {
     }
 });
 
+
+// A user resets the password if s/he is signed out and don't know the password, so s/he requests to reset the password 
 exports.resetPassword = asyncErrorHandler(async(req, res, next) => {
     //Here param token is in plain text whereas the token stored in database is encrypted, so encrypt the params toen too and find user with that token
     const token = crypto.createHash('sha256').update(req.params.token).digest('hex');
@@ -175,3 +189,31 @@ exports.resetPassword = asyncErrorHandler(async(req, res, next) => {
         token: loginToken
     });
 });
+
+//A signed in user can change(update) the password whenever s/he wants. This is the main difference between password reset and password update...
+exports.updatePassword = asyncErrorHandler(async(req, res, next)=>{
+    //Though user is currently loggedin, s/he needs to send the current passoword with req in order to confirm the user is actually authorized..
+    
+    //1. GET CURRENT USER DATA FROM THE DATABASE...
+    const user = await User.findById(req.user._id).select('+password');
+    //2. CHECK IF THE SUPPLIED CURRENT PASSWORD IS CORRECT...
+    if(!(await user.comparePasswordInDB(req.body.currentPassword, user.password))){
+        const err = new customError("The password you provided is wrong", 401);
+        return next(err);
+    }
+    //3.IF SUPPLIED PASSWORD IS CORRRECT, UPDATE USER PASSWORD WITH NEW VALUE
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
+    await user.save();
+
+    //4. LOGIN USER & SEND JWT(Json WebToken)...
+    const token = signToken(user._id);
+
+    res.status(200).json({
+        status: "success",
+        token,
+        data: {
+            user
+        }
+    });
+}); 
