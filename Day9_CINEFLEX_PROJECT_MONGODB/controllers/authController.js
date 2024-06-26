@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const customError = require("./../Utils/customError");
 const util = require('util')
 const sendEmail = require('./../Utils/email');
+const crypto = require('crypto');
 
 const signToken = (id) => {
     return jwt.sign({id}, process.env.SECRET_STR, {
@@ -147,5 +148,30 @@ exports.forgotPassword = asyncErrorHandler(async(req, res, next) => {
 });
 
 exports.resetPassword = asyncErrorHandler(async(req, res, next) => {
+    //Here param token is in plain text whereas the token stored in database is encrypted, so encrypt the params toen too and find user with that token
+    const token = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const user = await User.findOne({passwordResetToken: token, passwordResetTokenExpires: {$gt: Date.now()}}); 
+    if(!user){
+        const err = new customError("Token is invalid or has expired", 400);
+         return next(err);
+    }
+    //Reset the password 
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
+    //After updating the new password, make the passwordResetToken and passwordResetTokenExpires to undefined in database...
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpires = undefined;
+    //Set passwordChangedAt to the current date...
+    user.passwordChangedAt = Date.now();
 
+    //Save the changes to the database......
+    await user.save(); //We want all the validation to happen, so we are not passing any arguements here...
+
+    //Once the password is reset, we want to login the user automatically.....
+    const loginToken = signToken(user._id);
+
+    res.status(200).json({
+        status: "success",
+        token: loginToken
+    });
 });
