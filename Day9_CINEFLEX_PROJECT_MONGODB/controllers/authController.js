@@ -12,17 +12,19 @@ const signToken = (id) => {
     })
 }
 
-// const createSendResponse = (user, statusCode, res) => {
-//     const token = signToken(user._id);
 
-//     res.status(statusCode).json({
-//         status: "success",
-//         token,
-//         data: {
-//             user
-//         }
-//     });
-// }
+//Creating reusable function to attach token with response
+/*const createSendResponse = (user, statusCode, res) => {
+    const token = signToken(user._id);
+
+    res.status(statusCode).json({
+        status: "success",
+        token,
+        data: {
+            user
+        }
+    });
+}*/
 
 //route handler middleware...
 exports.signup = asyncErrorHandler(async(req, res, next)=>{
@@ -33,8 +35,7 @@ exports.signup = asyncErrorHandler(async(req, res, next)=>{
         //     expiresIn: process.env.EXPIRING_DAY
         // })
 
-        const token = signToken(newUser._id);
-
+       const token = signToken(newUser._id);
         res.status(201).json({
             status: 'success',
             token,
@@ -42,6 +43,7 @@ exports.signup = asyncErrorHandler(async(req, res, next)=>{
                 user: newUser
             }
         })
+        //createSendResponse(newUser, 201, res); -->Instead of above, we can use this function to sign token and set response...
 });
 
 //Signin a user means to sign a json web token and send it back to the user...
@@ -65,11 +67,11 @@ exports.login = asyncErrorHandler(async(req, res, next)=>{
     }
 
     const token = signToken(user._id);
-
     res.status(200).json({
         status: "success",
         token
     });
+    //createSendResponse(user, 200, res); -->Instead of above, we can use this to sign token and set response...
 });
 
 
@@ -135,9 +137,9 @@ exports.forgotPassword = asyncErrorHandler(async(req, res, next) => {
     await user.save({validateBeforeSave: false});
     
     //3. SEND THE TOKEN BACK TO THE USER EMAIL --> npm install nodemailer
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/user/resetPassword/${resetToken}`;
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetPassword/${resetToken}`;
     const message = `We have received a password reset request. Please use the below link to rest your password\n\n
-        ${resetUrl}\nThis url is valid for next 10 minutes only.`
+        ${resetUrl}\nThis url is valid for next 10 minutconst authRouter = require('./Routes/authRouter');es only.`
     try{
         await sendEmail({
             email: user.email,
@@ -188,32 +190,5 @@ exports.resetPassword = asyncErrorHandler(async(req, res, next) => {
         status: "success",
         token: loginToken
     });
+    //createSendResponse(user, 200, res); -->Instead of above, we can use this function to sign token and make response
 });
-
-//A signed in user can change(update) the password whenever s/he wants. This is the main difference between password reset and password update...
-exports.updatePassword = asyncErrorHandler(async(req, res, next)=>{
-    //Though user is currently loggedin, s/he needs to send the current passoword with req in order to confirm the user is actually authorized..
-    
-    //1. GET CURRENT USER DATA FROM THE DATABASE...
-    const user = await User.findById(req.user._id).select('+password');
-    //2. CHECK IF THE SUPPLIED CURRENT PASSWORD IS CORRECT...
-    if(!(await user.comparePasswordInDB(req.body.currentPassword, user.password))){
-        const err = new customError("The password you provided is wrong", 401);
-        return next(err);
-    }
-    //3.IF SUPPLIED PASSWORD IS CORRRECT, UPDATE USER PASSWORD WITH NEW VALUE
-    user.password = req.body.password;
-    user.confirmPassword = req.body.confirmPassword;
-    await user.save();
-
-    //4. LOGIN USER & SEND JWT(Json WebToken)...
-    const token = signToken(user._id);
-
-    res.status(200).json({
-        status: "success",
-        token,
-        data: {
-            user
-        }
-    });
-}); 
