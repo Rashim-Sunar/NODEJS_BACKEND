@@ -1,0 +1,18 @@
+We have seen, after many attempts to login, it tells to wait for 1hr for next try. This is called rate limiting.
+In express, we can do this by following way..
+
+    npm install express-rate-limit
+
+In app.js, creating a global middleware function to limit the try for all endpoints which starts with "/api"
+
+const rateLimit = require("express-rate-limit);
+
+let limiter = rateLimit({
+    max: 3, --> Gives upto 3 try
+    windowMs: 60*60*1000,  -->In 60 minutes
+    message: "Too many requests from this IP. Please try after one hour!"
+});
+
+app.use("/api" ,limiter);
+
+//This limiter will be applied to all those endpoints which starts with "/api".
