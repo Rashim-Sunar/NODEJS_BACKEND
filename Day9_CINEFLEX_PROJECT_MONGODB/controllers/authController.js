@@ -139,7 +139,7 @@ exports.forgotPassword = asyncErrorHandler(async(req, res, next) => {
     //3. SEND THE TOKEN BACK TO THE USER EMAIL --> npm install nodemailer
     const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetPassword/${resetToken}`;
     const message = `We have received a password reset request. Please use the below link to rest your password\n\n
-        ${resetUrl}\nThis url is valid for next 10 minutconst authRouter = require('./Routes/authRouter');es only.`
+    ${resetUrl}\nThis url is valid for next 10 minutes only.`
     try{
         await sendEmail({
             email: user.email,
@@ -160,7 +160,6 @@ exports.forgotPassword = asyncErrorHandler(async(req, res, next) => {
         return next(new customError("There is an error sending password reset email. Please try again."), 500);
     }
 });
-
 
 // A user resets the password if s/he is signed out and don't know the password, so s/he requests to reset the password 
 exports.resetPassword = asyncErrorHandler(async(req, res, next) => {

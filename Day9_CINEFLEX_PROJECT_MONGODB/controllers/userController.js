@@ -53,7 +53,7 @@ exports.updatePassword = asyncErrorHandler(async(req, res, next)=>{
 }); 
 
 
-//Any loggedin user can update his own details like(changing name).
+//Any loggedin user can update his own details like(changiAnishang name).
 exports.updateMe = asyncErrorHandler(async(req, res, next) => {
     //We can't use this endpoint to update the users password. For this we have separate endpoint as above.
     if(req.body.password || req.body.confirmPassword){
@@ -72,7 +72,15 @@ exports.updateMe = asyncErrorHandler(async(req, res, next) => {
         data: {
             user: updatedUser
         }
-    });
+    });    
+});
 
-    
+//Loggedin user can delete(soft delete--> only set as inactive in database)...
+exports.deleteMe = asyncErrorHandler(async(req, res, next) => {
+    await User.findByIdAndUpdate(req.user._id, {active: false});
+
+    res.status(204).json({
+        status: "success",
+        data: null
+    });
 });

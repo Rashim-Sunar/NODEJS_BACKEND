@@ -40,6 +40,12 @@ const userSchema = new mongoose.Schema({
             message: "Password and confirm passoword doesn't match!"
         }
     },
+    //if user is deleted, then his data is not deleted from databse, he is set as inactice(i.e. active: false)...
+    active: {
+        type: Boolean,
+        default: true,
+        select: false
+    },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetTokenExpires: Date
