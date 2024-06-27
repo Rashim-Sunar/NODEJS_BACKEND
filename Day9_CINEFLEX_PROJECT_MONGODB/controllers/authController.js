@@ -36,6 +36,20 @@ exports.signup = asyncErrorHandler(async(req, res, next)=>{
         // })
 
        const token = signToken(newUser._id);
+        //Using cookie for sending  JWT...
+        const options = {
+            maxAge: process.env.EXPIRING_DAY,
+            httpOnly: true
+        };
+
+        if(process.env.NODE_ENV === 'production'){
+            options.secure = true; //runs if https protocol only
+        }
+
+        res.cookie('jwt', token, options); //In similar way, we can set cookies in other route handlers..
+
+        newUser.password = undefined; //Not sending password in respond, just making it undefined, not removing from database..
+
         res.status(201).json({
             status: 'success',
             token,
