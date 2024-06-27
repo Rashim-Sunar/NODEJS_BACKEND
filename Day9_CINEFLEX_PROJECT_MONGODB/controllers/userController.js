@@ -12,7 +12,7 @@ const signToken = (id) => {
     })
 }
 
-
+//Used to filter the fields which are only to be updated... used in updateMe...
 const filterReqObj = (obj, ...allowFields) => {
     const newObj = {};
     Object.keys(obj).forEach(prop => {
@@ -82,5 +82,17 @@ exports.deleteMe = asyncErrorHandler(async(req, res, next) => {
     res.status(204).json({
         status: "success",
         data: null
+    });
+});
+
+exports.getAllUsers = asyncErrorHandler(async(req, res, next) => {
+    const users = await User.find();
+
+    res.status(200).json({
+        status: "success",
+        users: users.length,
+        data: {
+            users
+        }
     });
 });

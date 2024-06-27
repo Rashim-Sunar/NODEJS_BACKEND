@@ -61,6 +61,13 @@ userSchema.pre('save', async function(next){
     next();
 });
 
+// find query middleware --> This middleware runs before every find  query done on database..,
+userSchema.pre(/^find/, function(next){
+    //this keyword here points to the current query...
+    this.find({active: {$ne: false}}); //applying filter --> only users who are active are returned... $ne-->not equal to
+    next();
+});
+
 //Creating a function to compare the password which we are receing in the body with the password that is saved in database.
 //Creating a instance method -> A instance method is available to all the documents of a collection. i.e. to all the instance of userModel(this file).
 userSchema.methods.comparePasswordInDB = async function(pswd, pswdDB){
