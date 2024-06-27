@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+const helmet = require('helmet');
+const sanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 const moviesRouter = require('./Routes/moviesRouter');
 const authRouter = require('./Routes/authRouter');
@@ -7,7 +10,12 @@ const userRouter = require('./Routes/userRouter');
 const customError = require("./Utils/customError");
 const globalErrorHandler = require("./controllers/globalErrorHandler");
 
-app.use(express.json())
+app.use(helmet());
+
+app.use(express.json({limit: "10kb"})) //We can receive maximum of 10Kb data in the request, if more then it will be truncate
+
+app.use(sanitize());
+app.use(xss());
 
 app.use("/api/v1/movies",moviesRouter); 
 app.use("/api/v1/auth", authRouter);

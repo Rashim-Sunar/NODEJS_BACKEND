@@ -16,3 +16,48 @@ let limiter = rateLimit({
 app.use("/api" ,limiter);
 
 //This limiter will be applied to all those endpoints which starts with "/api".
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+****HELMET***
+-->  Helmet helps secure Express apps by setting HTTP response headers.
+
+Get started
+Here's a sample Express app that uses Helmet:
+
+import express from "express";
+import helmet from "helmet";
+
+const app = express();
+
+// Use Helmet!
+app.use(helmet());
+
+app.get("/", (req, res) => {
+  res.send("Hello world!");
+});
+
+app.listen(8000);
+You can also require("helmet") if you prefer.
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+DATA SANITIZATION
+    --> Attackers may send NOSQL code or javascript/html code along the request, which may harm our application and database.
+To avoid such type of attacks, we use data sanitization in express.
+
+npm install express-mongo-sanitize
+npm install xss-clean
+
+These two modules must be used in app.js after app.use(express.json()) i.e.after request is received 
+
+const sanitize = require('express-mongo-sanitize');
+const xss = require("xss-clean");
+
+app.use(express.json());
+app.use(sanitize());
+app.use(xss())
