@@ -15,8 +15,10 @@ app.get("/", (req, res) => {
 //sokcet here means client
 io.on('connection', (socket)=>{
     console.log("A new user connected", socket.id);
-    socket.on("chat message", (msg) => {
-        console.log("Message: "+msg);
+    socket.on("chat message", (msg) => {  //listening to the emitted event 'chat message' by client
+        // console.log("Message: "+msg);
+
+        io.emit("message", msg); //Broadcasting the information got from a client to every other users.
     })
 })
 
