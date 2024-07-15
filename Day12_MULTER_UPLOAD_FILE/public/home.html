@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- action = " " here is the endpoint POST method in the backend {i.e. route in backend -> app.post("/upload", () => {})}-->
+    <form action="/profile" method="post" enctype="multipart/form-data"> 
+        <!-- UPLOAD SINGLE FILE -->
+        <!-- <input type="file" name="profileImage" />-->
+
+        <!-- UPLOAD MULTIPLE FILES -->
+        <input type="file" name="profileImage"/>
+        <input type="file" name="coverImage"/>
+        <button type="submit">Upload</button>
+      </form>
+</body>
+</html>
